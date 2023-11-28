@@ -1,0 +1,292 @@
+# Movie Ratings data Project 
+#Tutorial 60-61
+
+# -----------------------------------------1st step (Data) 
+
+getwd()
+setwd("/Users/nouraantabli/Desktop/R Udemy Course /Course work /Section 6")
+getwd()
+
+movies <- read.csv("P2-Movie-Ratings.csv")
+head(movies)
+tail(movies)
+summary(movies)
+str(movies)
+
+# We want to change the names of the column names (includes ..)
+
+colnames(movies) <- c("Film", "Genre", "CriticRating", "AudienceRating", "BudgetMillions", "Year")
+head(movies)
+str(movies)
+summary(movies)
+
+# How to convert year into factors 
+
+factor(movies$Year)
+movies$Year <- factor(movies$Year)
+
+summary(movies)
+str(movies)
+
+# ------------------------------------------- 2nd Step (Aesthetics aes)
+
+library(ggplot2) #load the library 
+
+ggplot(data=movies, aes(x=CriticRating, y=AudienceRating))
+
+ggplot(data=movies, aes(x=CriticRating, y=AudienceRating, 
+                        colour = Genre, size=BudgetMillions)) + 
+  geom_point(alpha = 0.5) 
+
+#Colour = Genre (Seperate colour by genre)
+
+# -------------------------------------- 3rd step (Plotting with Layers)
+
+p <- ggplot(data=movies, aes(x=CriticRating, y=AudienceRating, 
+                        colour = Genre, size=BudgetMillions)) + 
+  geom_point()
+# Now all this information is in an object called p 
+
+p + geom_point()
+
+
+#multiple layers 
+
+p + geom_line() + geom_point()
+p + geom_point() + geom_line()
+# you can plot layer on top of layer 
+
+
+# ---------------------------------------- 4th step (Overriding aestetics)
+
+q <- ggplot(data=movies, aes(x=CriticRating, y=AudienceRating,
+                             colour = Genre, size=BudgetMillions))
+# Object is created q 
+
+#add geom layer 
+q + geom_point()
+
+#--------------------------------------- Overriding aestetics 
+# ex1
+q + geom_point(aes(size=CriticRating))
+
+#ex2
+
+q + geom_point(aes(colour=BudgetMillions))
+
+# q object remains the same as when we created it 
+q + geom_point()
+
+# ex3 ------- override x and y 
+
+q + geom_point(aes(x = BudgetMillions)) +
+  xlab("Budge Millions") 
+#xlab is used to override the original x-axis title
+
+#ex4
+
+q + geom_line(size=1) + geom_point()
+
+#Mapping vs. Setting (Why? in ex4 we didnt put aes before size)
+# ------------------------------ tutorial 62 -- Mapping vs setting 
+
+# new object 
+
+r <- ggplot(data=movies, aes(x=CriticRating, y=AudienceRating))
+r + geom_point()
+
+#Add colour 
+#1. Mapping (What we have done so far)
+r + geom_point(aes(colour=Genre))
+
+#2. Setting: 
+r + geom_point(colour="DarkGreen")
+
+#1. Mapping 
+r + geom_point(aes(size=BudgetMillions))
+
+#2. Setting 
+r + geom_point(size=2)
+
+# ---------------------------------- Histograms and Density Charts 
+
+s <- ggplot(data=movies, aes(x=BudgetMillions)) #no y aes
+s + geom_histogram(binwidth = 10)
+
+#add colour 
+
+s + geom_histogram(binwidth=10, aes(fill=Genre))
+
+#add a border to the colors ^ (colour=black) creates a border 
+s + geom_histogram(binwidth=10, aes(fill=Genre), colour="Black")
+
+# Chart 3 (It will be improved at the end of the section)
+
+#Density Charts
+
+s + geom_density(aes(fill=Genre), position="stack")
+
+
+# Starting layer tips 
+
+t <- ggplot(data=movies)
+t + geom_histogram(binwidth = 10, 
+                   fill="White", colour="blue")
+
+#Another method 
+
+t <- ggplot(data=movies)
+t + geom_histogram(binwidth = 10, 
+                    aes(x=AudienceRating), 
+                    fill="White", colour="Blue")
+
+# Chart 4 
+
+t + geom_histogram(binwidth = 10, 
+                   aes(x=CriticRating), 
+                   fill="White", colour="Blue")
+
+t=ggplot() #you can use this also in some cases 
+
+#--------------------------------Next Tutorial: Statistical Transformations 
+
+u <- ggplot(data=movies, aes(x=CriticRating, y=AudienceRating, 
+                             colour = Genre))
+
+u + geom_point() + geom_smooth(fill=NA)
+
+#boxplots 
+
+u <- ggplot(data=movies, aes(x=Genre, y=AudienceRating, 
+                             colour=Genre))
+u + geom_boxplot(size=1.2)
+u + geom_boxplot(size=1.2) + geom_point()
+
+#Tip for the above 
+u + geom_boxplot(size=1.2) + geom_jitter()
+u + geom_jitter() + geom_boxplot(size=1.2, alpha=0.5)
+#geom_jitter creates dots around the box plot. You can connect two types of geoms together
+
+
+# ----------------------------------- Next tutorial - Facets 
+
+v <- ggplot(data=movies, aes(x=BudgetMillions))
+v + geom_histogram(binwidth=10, aes(fill=Genre), 
+                                    colour="Black")
+
+# Facets - Histogram for each genre 
+
+v <- ggplot(data=movies, aes(x=BudgetMillions))
+v + geom_histogram(binwidth=10, aes(fill=Genre), 
+                   colour="Black") + 
+  facet_grid(Genre~., scales="free")
+#scales = free (each bar has its own space)
+
+#scatterplots: Facets 
+
+w <- ggplot(data=movies, aes(x=CriticRating, y=AudienceRating,
+                             colour=Genre))
+w + geom_point(size=3)
+
+#Facets 
+w + geom_point(size=3) + 
+  facet_grid(.~Genre)
+#or 
+w + geom_point(size=3) + 
+  facet_grid(Genre~.)
+
+w + geom_point(size=3) + 
+  facet_grid(.~Year)
+
+w + geom_point(size=2) + 
+  facet_grid(Genre~Year)
+
+#add a smoother (geom_smooth())
+
+w + geom_point(size=2) + 
+  geom_smooth() +
+  facet_grid(Genre~Year)
+
+w + geom_point(aes(size=BudgetMillions)) + 
+  geom_smooth() +
+  facet_grid(Genre~Year)
+# Improved chart from earlier ^ 
+# Still can improve on y axis (get rid of -50)
+
+# ----------------------------------- Next (Coordinates)
+
+#Limits & Zoom 
+m <- ggplot(data=movies, aes(x=CriticRating, y=AudienceRating, 
+                             size=BudgetMillions, 
+                             colour=Genre))
+
+m + geom_point() + 
+  xlim(50, 100) + 
+  ylim(50, 100)
+
+#xlim = x axis limit 
+#ylim = y axis limit 
+
+# This method wont always work 
+# Example 
+
+n <- ggplot(data=movies, aes(x=BudgetMillions))
+n + geom_histogram(binwidth=10, aes(fill=Genre), colour="Black")
+
+n + geom_histogram(binwidth=10, aes(fill=Genre), colour="Black") + 
+  ylim(0,50)
+
+#instead - zoom: 
+n + geom_histogram(binwidth=10, aes(fill=Genre), colour="Black") + 
+  coord_cartesian(ylim=c(0,50))
+
+# ----------------- improve the w graph above 
+
+w + geom_point(aes(size=BudgetMillions)) + 
+  geom_smooth() +
+  facet_grid(Genre~Year)
+coord_cartesian(ylim=c(0,100))
+
+# Chatgpt Examples 
+
+w + geom_point(aes(size=BudgetMillions)) + 
+  geom_smooth() +
+  facet_grid(Genre~Year) + 
+coord_cartesian(xlim=NULL, ylim=NULL, expand = TRUE, clip = "on")
+
+#--------------------------------- Last section: Themes 
+
+o <- ggplot(data=movies, aes(x=BudgetMillions))
+o + geom_histogram(binwidth=10, aes(fill=Genre), colour="Black")
+
+#Add axes labels
+h <- o + geom_histogram(binwidth=10, aes(fill=Genre), colour="Black")
+
+h
+
+h + xlab("Money Axis") + ylab("Number of Movies")
+
+# Label Formatting 
+
+h + 
+  xlab("Money Axis") + 
+  ylab("Number of Movies") +
+  ggtitle("Movie Budget Distribution") + 
+  theme(axis.title.x = element_text(colour="DarkGreen", size=25), 
+        axis.title.y = element_text(colour="Red", size=25),
+        axis.text.x = element_text(size=20),
+        axis.text.y = element_text(size=20), 
+        
+        legend.title = element_text(size=20), 
+        legend.text = element_text(size=20),
+        legend.position = c(1,1), 
+        legend.justification = c(1,1),
+        
+        plot.title = element_text(colour="DarkBlue", 
+                                  size=30, 
+                                  family = "Courier"))
+
+# family = font type 
+
+#axis.test.y or .x is for the axis numbers (ticks)
+?theme
