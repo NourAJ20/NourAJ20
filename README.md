@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @NourAJ20
 - 👀 I’m interested in Data Analysis 
-- 🌱 I’m currently learning SQL, Python, and R 
+- 🌱 My current favorite data language is R 
 - 💞️ I’m looking to collaborate on Data and Educational Projects 
 - 📫 How to reach me -> nouraantabli@gmail.com
 - I have a Master of Science in Organizational Psychology. Data is also very important in that field. 
